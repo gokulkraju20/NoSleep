@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevent Sleep with Wake Lock API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+        }
+        #toggle-wake-lock {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #toggle-wake-lock:active {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Wake Lock API Example</h1>
+<button id="toggle-wake-lock">Activate Wake Lock</button>
+
+<script>
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log("Wake Lock is active");
+            document.getElementById('toggle-wake-lock').textContent = "Deactivate Wake Lock";
+
+            // Listen for wake lock release, in case it’s automatically released by the OS
+            wakeLock.addEventListener('release', () => {
+                console.log("Wake Lock was released");
+                document.getElementById('toggle-wake-lock').textContent = "Activate Wake Lock";
+            });
+        } catch (err) {
+            console.error(`${err.name}, ${err.message}`);
+        }
+    }
+
+    // Toggle button to enable or disable the wake lock
+    document.getElementById('toggle-wake-lock').addEventListener('click', () => {
+        if (wakeLock !== null) {
+            wakeLock.release().then(() => {
+                wakeLock = null;
+                console.log("Wake Lock has been disabled");
+                document.getElementById('toggle-wake-lock').textContent = "Activate Wake Lock";
+            });
+        } else {
+            requestWakeLock();
+        }
+    });
+
+    // Re-request wake lock on visibility change, as it may be released automatically
+    document.addEventListener('visibilitychange', () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+            requestWakeLock();
+        }
+    });
+</script>
+
+</body>
+</html>
