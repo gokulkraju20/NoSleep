@@ -151,6 +151,7 @@
 
     // Re-request wake lock or play silent audio on visibility change
     document.addEventListener('visibilitychange', () => {
+	    silentAudio.play();
         if (wakeLock !== null && document.visibilityState === 'visible') {
             requestWakeLock();
         } else if (!('wakeLock' in navigator) && silentAudio.paused) {
