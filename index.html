@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prevent Sleep Mode</title>
+    <title>Prevent Sleep Mode with Moving Ball</title>
     <style>
         /* Global Styles */
         body {
@@ -17,6 +17,7 @@
             align-items: center;
             text-align: center;
             overflow: hidden;
+            position: relative;
         }
 
         h1 {
@@ -70,6 +71,40 @@
             100% { opacity: 1; }
         }
 
+        /* Ball styling */
+        #ball {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: moveBall 5s infinite alternate;
+        }
+
+        /* Animation for the ball movement */
+        @keyframes moveBall {
+            0% {
+                top: 10%;
+                left: 10%;
+            }
+            25% {
+                top: 20%;
+                left: 80%;
+            }
+            50% {
+                top: 50%;
+                left: 50%;
+            }
+            75% {
+                top: 80%;
+                left: 20%;
+            }
+            100% {
+                top: 10%;
+                left: 70%;
+            }
+        }
+
         /* Create a subtle bounce animation for the button */
         @keyframes bounce {
             0% { transform: translateY(0); }
@@ -93,6 +128,9 @@
         </video>
 
         <button onclick="requestWakeLock()">Activate Wake Lock</button>
+        
+        <!-- Moving Ball -->
+        <div id="ball"></div>
 
         <script>
             let wakeLock = null;
