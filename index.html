@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prevent Sleep with Wake Lock API</title>
     <style>
+        /* Gradient background */
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -13,22 +14,71 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #ffffff;
+            text-align: center;
         }
+
+        /* Heading style */
         h1 {
-            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+            animation: fadeIn 1s ease-out;
         }
+
+        /* Button styling */
         #toggle-wake-lock {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
+            padding: 15px 30px;
+            font-size: 1.2rem;
             color: white;
+            background: #4CAF50;
             border: none;
-            border-radius: 5px;
+            border-radius: 50px;
             cursor: pointer;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
+
+        #toggle-wake-lock:hover {
+            background: #45a049;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
         #toggle-wake-lock:active {
-            background-color: #0056b3;
+            background: #3e8e41;
+            transform: translateY(2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Status styling with pulse effect */
+        #status {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Active status pulse effect */
+        .active-status {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Pulse animation */
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -36,40 +86,54 @@
 
 <h1>Wake Lock API Example</h1>
 <button id="toggle-wake-lock">Activate Wake Lock</button>
+<p id="status">Status: Wake Lock is inactive</p>
 
 <script>
     let wakeLock = null;
+    const statusElement = document.getElementById('status');
+    const toggleButton = document.getElementById('toggle-wake-lock');
 
     async function requestWakeLock() {
         try {
-            wakeLock = await navigator.wakeLock.request('screen');
-            console.log("Wake Lock is active");
-            document.getElementById('toggle-wake-lock').textContent = "Deactivate Wake Lock";
+            if ('wakeLock' in navigator) {  // Check for Wake Lock support
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log("Wake Lock is active");
+                toggleButton.textContent = "Deactivate Wake Lock";
+                statusElement.textContent = "Status: Wake Lock is active";
+                statusElement.classList.add("active-status");
 
-            // Listen for wake lock release, in case it’s automatically released by the OS
-            wakeLock.addEventListener('release', () => {
-                console.log("Wake Lock was released");
-                document.getElementById('toggle-wake-lock').textContent = "Activate Wake Lock";
-            });
+                // Listen for wake lock release
+                wakeLock.addEventListener('release', () => {
+                    console.log("Wake Lock was released");
+                    toggleButton.textContent = "Activate Wake Lock";
+                    statusElement.textContent = "Status: Wake Lock is inactive";
+                    statusElement.classList.remove("active-status");
+                });
+            } else {
+                alert("Wake Lock API is not supported in this browser.");
+                console.log("Wake Lock API is not supported in this browser.");
+            }
         } catch (err) {
             console.error(`${err.name}, ${err.message}`);
         }
     }
 
     // Toggle button to enable or disable the wake lock
-    document.getElementById('toggle-wake-lock').addEventListener('click', () => {
+    toggleButton.addEventListener('click', () => {
         if (wakeLock !== null) {
             wakeLock.release().then(() => {
                 wakeLock = null;
                 console.log("Wake Lock has been disabled");
-                document.getElementById('toggle-wake-lock').textContent = "Activate Wake Lock";
+                toggleButton.textContent = "Activate Wake Lock";
+                statusElement.textContent = "Status: Wake Lock is inactive";
+                statusElement.classList.remove("active-status");
             });
         } else {
             requestWakeLock();
         }
     });
 
-    // Re-request wake lock on visibility change, as it may be released automatically
+    // Re-request wake lock on visibility change
     document.addEventListener('visibilitychange', () => {
         if (wakeLock !== null && document.visibilityState === 'visible') {
             requestWakeLock();
