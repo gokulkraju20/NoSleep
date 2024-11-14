@@ -3,167 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prevent Sleep Mode with Moving Ball</title>
+    <title>Prevent VDI Sleep Mode</title>
     <style>
-        /* Global Styles */
+        /* Body styling */
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #ff7e5f, #feb47b);
-            height: 100vh;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            height: 100vh;
             overflow: hidden;
-            position: relative;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
         }
 
+        /* Heading styling */
         h1 {
             font-size: 2.5rem;
-            color: white;
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
             animation: fadeIn 2s ease-in-out;
         }
 
+        /* Instructions styling */
         #status {
             font-size: 1.2rem;
-            color: #fff;
-            margin-top: 20px;
+            margin-top: 1rem;
+            color: #ffe7b3;
             animation: fadeIn 3s ease-in-out;
         }
 
-        /* Button Style */
+        /* Button styling */
         button {
-            background-color: #fff;
+            background-color: #ffb347;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 24px;
             font-size: 1.2rem;
-            color: #ff7e5f;
-            border-radius: 5px;
+            color: #333;
+            border-radius: 25px;
             cursor: pointer;
-            margin-top: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+            margin-top: 2rem;
         }
 
         button:hover {
-            background-color: #ff7e5f;
-            color: #fff;
-            transform: scale(1.05);
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
 
-        /* Video styling */
-        #silent-video {
-            width: 100%;
-            height: 100%;
-            max-width: 640px;
-            max-height: 360px;
-            border: 3px solid #fff;
-            margin-top: 20px;
-            animation: fadeIn 4s ease-in-out;
-        }
-
-        /* Keyframes for Fade-In Animation */
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        /* Ball styling */
+        /* Ball animation */
         #ball {
             position: absolute;
             width: 50px;
             height: 50px;
-            background-color: #fff;
+            background-color: #ffe7b3;
             border-radius: 50%;
-            animation: moveBall 5s infinite alternate;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: moveBall 8s infinite alternate ease-in-out;
         }
 
-        /* Animation for the ball movement */
+        /* Ball animation keyframes */
         @keyframes moveBall {
-            0% {
-                top: 10%;
-                left: 10%;
-            }
-            25% {
-                top: 20%;
-                left: 80%;
-            }
-            50% {
-                top: 50%;
-                left: 50%;
-            }
-            75% {
-                top: 80%;
-                left: 20%;
-            }
-            100% {
-                top: 10%;
-                left: 70%;
-            }
+            0% { top: 10%; left: 10%; }
+            25% { top: 20%; left: 80%; }
+            50% { top: 60%; left: 50%; }
+            75% { top: 80%; left: 20%; }
+            100% { top: 10%; left: 90%; }
         }
 
-        /* Create a subtle bounce animation for the button */
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            20% { transform: translateY(-10px); }
-            40% { transform: translateY(0); }
-        }
-
-        button:active {
-            animation: bounce 0.5s ease-in-out;
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div>
-        <h1>Prevent Sleep Mode</h1>
-        <p id="status">Attempting to prevent sleep...</p>
+        <h1>Prevent VDI Sleep Mode</h1>
+        <p id="status">Ensuring the screen stays active...</p>
+        <button onclick="requestWakeLock()">Activate Wake Lock</button>
 
-        <!-- Visible silent video -->
-        <video id="silent-video" autoplay loop muted>
+        <!-- Silent Video (Fallback for Wake Lock API) -->
+        <video id="silent-video" autoplay loop muted style="display: none;">
             <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
         </video>
-
-        <button onclick="requestWakeLock()">Activate Wake Lock</button>
         
-        <!-- Moving Ball -->
+        <!-- Moving Ball Animation -->
         <div id="ball"></div>
-
-        <script>
-            let wakeLock = null;
-
-            // Function to request Wake Lock
-            async function requestWakeLock() {
-                if ('wakeLock' in navigator) {
-                    try {
-                        wakeLock = await navigator.wakeLock.request('screen');
-                        document.getElementById('status').textContent = 'Wake Lock is active. Screen will not sleep.';
-                        wakeLock.addEventListener('release', () => {
-                            document.getElementById('status').textContent = 'Wake Lock was released!';
-                        });
-                    } catch (err) {
-                        document.getElementById('status').textContent = `Wake Lock API failed: ${err.name}`;
-                    }
-                } else {
-                    document.getElementById('status').textContent = 'Wake Lock API is not supported on your browser. Using silent video as fallback.';
-                    playSilentVideo();
-                }
-            }
-
-            // Fallback: Play silent video to prevent sleep
-            function playSilentVideo() {
-                const silentVideo = document.getElementById('silent-video');
-                silentVideo.play();
-            }
-
-            // Request Wake Lock on page load (fallback if API is not supported)
-            window.addEventListener('load', () => {
-                requestWakeLock();
-            });
-        </script>
     </div>
+
+    <script>
+        let wakeLock = null;
+
+        // Request Wake Lock to prevent the screen from going to sleep
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    document.getElementById('status').textContent = 'Wake Lock is active. Screen will not sleep.';
+                    wakeLock.addEventListener('release', () => {
+                        document.getElementById('status').textContent = 'Wake Lock was released.';
+                    });
+                } catch (err) {
+                    document.getElementById('status').textContent = `Wake Lock API not supported: ${err.message}`;
+                }
+            } else {
+                document.getElementById('status').textContent = 'Wake Lock API is not supported. Playing silent video as fallback.';
+                playSilentVideo();
+            }
+        }
+
+        // Function to play a silent video as a fallback to keep the screen active
+        function playSilentVideo() {
+            const silentVideo = document.getElementById('silent-video');
+            silentVideo.style.display = 'block';
+            silentVideo.play();
+        }
+
+        // Automatically attempt to activate Wake Lock or play video on page load
+        window.addEventListener('load', () => {
+            requestWakeLock();
+        });
+
+        // Re-request Wake Lock on visibility change, as it may be released
+        document.addEventListener('visibilitychange', () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+        });
+    </script>
 </body>
 </html>
