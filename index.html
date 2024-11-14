@@ -3,107 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prevent Sleep with Silent Video</title>
+    <title>Prevent Sleep Mode with Silent Video</title>
     <style>
-        /* Gradient background */
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
+            background-color: #f3f4f6;
             margin: 0;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #ffffff;
             text-align: center;
-            overflow: hidden;
         }
-
-        /* Heading style */
         h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 20px;
-            color: #ffffff;
-            animation: fadeIn 1s ease-out;
         }
-
-        /* Button styling */
-        #toggle-wake-lock {
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            color: white;
-            background: #4CAF50;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        #toggle-wake-lock:hover {
-            background: #45a049;
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
-            transform: translateY(-3px);
-        }
-
-        #toggle-wake-lock:active {
-            background: #3e8e41;
-            transform: translateY(2px);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Status styling */
         #status {
-            margin-top: 20px;
             font-size: 1.2rem;
-            color: #ffffff;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            animation: fadeIn 1s ease-out;
+            color: green;
         }
-
-        /* Fade-in animation */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        /* Video styling */
+        #silent-video {
+            width: 640px;
+            height: 360px;
+            border: 3px solid #000;
+            margin-top: 20px;
         }
-
     </style>
 </head>
 <body>
+    <div>
+        <h1>Prevent Sleep Mode with Silent Video</h1>
+        <p id="status">Attempting to prevent sleep...</p>
 
-<h1>Prevent Sleep with Silent Video</h1>
-<p id="status">Silent video is active to prevent sleep.</p>
+        <!-- Visible silent video (black video loop) -->
+        <video id="silent-video" autoplay loop muted>
+            <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
+        </video>
 
-<!-- Silent video (black video loop) -->
-<video id="silent-video" autoplay loop muted style="display: none;">
-    <!-- Create a simple 1x1 pixel silent black video -->
-    <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
-</video>
+        <button onclick="requestWakeLock()">Activate Wake Lock</button>
+        <script>
+            let wakeLock = null;
 
-<script>
-    const silentVideo = document.getElementById('silent-video');
-    const statusElement = document.getElementById('status');
-    
-    // Start playing silent video as soon as the page loads
-    window.addEventListener('load', () => {
-        silentVideo.play();
-        statusElement.textContent = "Silent video is actively playing to prevent sleep.";
-    });
+            // Function to request Wake Lock
+            async function requestWakeLock() {
+                if ('wakeLock' in navigator) {
+                    try {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        document.getElementById('status').textContent = 'Wake Lock is active. Screen will not sleep.';
+                        wakeLock.addEventListener('release', () => {
+                            document.getElementById('status').textContent = 'Wake Lock was released!';
+                        });
+                    } catch (err) {
+                        document.getElementById('status').textContent = `Wake Lock API failed: ${err.name}`;
+                    }
+                } else {
+                    document.getElementById('status').textContent = 'Wake Lock API is not supported on your browser. Using silent video as fallback.';
+                    playSilentVideo();
+                }
+            }
 
-    // Optional: Button to toggle the silent video playback (if needed)
-    document.getElementById('toggle-wake-lock').addEventListener('click', () => {
-        if (silentVideo.paused) {
-            silentVideo.play();
-            statusElement.textContent = "Silent video is actively playing to prevent sleep.";
-        } else {
-            silentVideo.pause();
-            statusElement.textContent = "Silent video has been stopped.";
-        }
-    });
-</script>
+            // Fallback: Play silent video to prevent sleep
+            function playSilentVideo() {
+                const silentVideo = document.getElementById('silent-video');
+                silentVideo.play();
+            }
 
+            // Request Wake Lock on page load (fallback if API is not supported)
+            window.addEventListener('load', () => {
+                requestWakeLock();
+            });
+        </script>
+    </div>
 </body>
 </html>
