@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prevent Sleep with Wake Lock API</title>
+    <title>Prevent Sleep with Silent Audio</title>
     <style>
         /* Gradient background */
         body {
@@ -52,7 +52,7 @@
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Status styling with pulse effect */
+        /* Status styling */
         #status {
             margin-top: 20px;
             font-size: 1.2rem;
@@ -63,99 +63,42 @@
             animation: fadeIn 1s ease-out;
         }
 
-        /* Active status pulse effect */
-        .active-status {
-            animation: pulse 1.5s infinite;
-        }
-
         /* Fade-in animation */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
-        /* Pulse animation */
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.05); }
-            100% { opacity: 1; transform: scale(1); }
-        }
     </style>
 </head>
 <body>
 
-<h1>Wake Lock API Example</h1>
-<button id="toggle-wake-lock">Activate Wake Lock</button>
-<p id="status">Status: Wake Lock is inactive</p>
+<h1>Prevent Sleep with Silent Audio</h1>
+<p id="status">Silent audio is active to prevent sleep.</p>
 
 <!-- Invisible audio element for fallback -->
-<audio id="silent-audio" loop style="display: none;">
+<audio id="silent-audio" loop autoplay style="display: none;">
     <source src="data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=" type="audio/wav">
 </audio>
 
 <script>
-    let wakeLock = null;
-    const statusElement = document.getElementById('status');
-    const toggleButton = document.getElementById('toggle-wake-lock');
     const silentAudio = document.getElementById('silent-audio');
-
-    async function requestWakeLock() {
-        try {
-            if ('wakeLock' in navigator) {  // Check for Wake Lock support
-                wakeLock = await navigator.wakeLock.request('screen');
-                console.log("Wake Lock is active");
-                toggleButton.textContent = "Deactivate Wake Lock";
-                statusElement.textContent = "Status: Wake Lock is active";
-                statusElement.classList.add("active-status");
-
-                // Listen for wake lock release
-                wakeLock.addEventListener('release', () => {
-                    console.log("Wake Lock was released");
-                    toggleButton.textContent = "Activate Wake Lock";
-                    statusElement.textContent = "Status: Wake Lock is inactive";
-                    statusElement.classList.remove("active-status");
-                });
-            } else {
-                alert("Wake Lock API is not supported in this browser. Using silent audio workaround.");
-                silentAudio.play();  // Fallback to play silent audio
-                toggleButton.textContent = "Deactivate Silent Audio";
-                statusElement.textContent = "Status: Silent audio workaround is active";
-                statusElement.classList.add("active-status");
-            }
-        } catch (err) {
-            console.error(`${err.name}, ${err.message}`);
-        }
-    }
-
-    // Toggle button to enable or disable the wake lock or silent audio
-    toggleButton.addEventListener('click', () => {
-        if (wakeLock !== null) {
-            wakeLock.release().then(() => {
-                wakeLock = null;
-                console.log("Wake Lock has been disabled");
-                toggleButton.textContent = "Activate Wake Lock";
-                statusElement.textContent = "Status: Wake Lock is inactive";
-                statusElement.classList.remove("active-status");
-            });
-        } else if (!('wakeLock' in navigator) && !silentAudio.paused) {
-            silentAudio.pause();
-            silentAudio.currentTime = 0;
-            console.log("Silent audio has been disabled");
-            toggleButton.textContent = "Activate Wake Lock";
-            statusElement.textContent = "Status: Silent audio workaround is inactive";
-            statusElement.classList.remove("active-status");
-        } else {
-            requestWakeLock();
-        }
+    const statusElement = document.getElementById('status');
+    
+    // Start playing silent audio as soon as the page loads
+    window.addEventListener('load', () => {
+        silentAudio.play();
+        statusElement.textContent = "Silent audio is actively playing to prevent sleep.";
     });
 
-    // Re-request wake lock or play silent audio on visibility change
-    document.addEventListener('visibilitychange', () => {
-	    silentAudio.play();
-        if (wakeLock !== null && document.visibilityState === 'visible') {
-            requestWakeLock();
-        } else if (!('wakeLock' in navigator) && silentAudio.paused) {
+    // Allow toggling of the silent audio playback (optional)
+    document.getElementById('toggle-wake-lock').addEventListener('click', () => {
+        if (silentAudio.paused) {
             silentAudio.play();
+            statusElement.textContent = "Silent audio is actively playing to prevent sleep.";
+        } else {
+            silentAudio.pause();
+            statusElement.textContent = "Silent audio has been stopped.";
         }
     });
 </script>
