@@ -6,15 +6,10 @@
     <title>Prevent VDI Sleep Mode - Animated Experience</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Prevent your VDI or computer from going idle with this Wake Lock API example. Includes animations and a fallback method for non-supported devices.">
-    <meta name="keywords" content="Prevent sleep mode, VDI prevent sleep, computer idle prevent, Wake Lock API, screen wake lock, keep computer awake, avoid sleep mode, animation to prevent sleep, web page stay active">
+    <meta name="description" content="Prevent your VDI or computer from going idle with a Wake Lock API example. Includes animations and fallback for non-supported devices.">
+    <meta name="keywords" content="Prevent sleep mode, VDI prevent sleep, computer idle prevent, Wake Lock API, screen wake lock, keep computer awake, avoid sleep mode, animation to prevent sleep">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Your Name">
-    <meta name="og:title" content="Prevent Computer and VDI from Sleeping - Wake Lock API Example">
-    <meta name="og:description" content="A web-based solution to keep your VDI or computer active using Wake Lock API and a silent video fallback.">
-    <meta name="og:type" content="website">
-    <meta name="og:url" content="https://yourwebsite.com/prevent-vdi-sleep">
-    <meta name="og:image" content="https://yourwebsite.com/images/sleep-prevent-thumbnail.jpg">
 
     <style>
         /* Body styling */
@@ -26,7 +21,6 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             text-align: center;
@@ -39,7 +33,7 @@
             animation: fadeIn 2s ease-in-out;
         }
 
-        /* Instructions styling */
+        /* Status styling */
         #status {
             font-size: 1.2rem;
             margin-top: 1rem;
@@ -66,23 +60,41 @@
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
 
-        /* Animated video box styling */
+        /* Video container styling with animation */
         #video-container {
             position: relative;
             width: 200px;
             height: 200px;
             overflow: hidden;
-            animation: floatBox 6s infinite alternate ease-in-out;
             border-radius: 10px;
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            background-color: #222;
             margin-top: 2rem;
         }
 
-        /* Float animation for video box */
-        @keyframes floatBox {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-10px) rotate(3deg); }
-            100% { transform: translateY(10px) rotate(-3deg); }
+        /* Animation of figures walking across the screen */
+        .figure {
+            width: 30px;
+            height: 60px;
+            background-color: #ffb347;
+            border-radius: 15px;
+            position: absolute;
+            bottom: 10px;
+            animation: walk 5s linear infinite;
+        }
+
+        .figure-2 {
+            background-color: #67eaca;
+            width: 20px;
+            height: 40px;
+            border-radius: 10px;
+            animation-duration: 6s;
+        }
+
+        /* Walk animation */
+        @keyframes walk {
+            0% { left: -50px; }
+            100% { left: 250px; }
         }
 
         /* Fade-in animation */
@@ -96,30 +108,39 @@
     <div>
         <h1>Prevent VDI Sleep Mode</h1>
         <p id="status">Ensuring the screen stays active...</p>
-        <button onclick="requestWakeLock()">Activate Wake Lock</button>
+        <button onclick="toggleWakeLock()">Activate Wake Lock</button>
 
         <!-- Silent Video with animated container -->
         <div id="video-container">
-            <video id="silent-video" autoplay loop muted width="100%" height="100%">
+            <video id="silent-video" autoplay loop muted width="100%" height="100%" style="display: none;">
                 <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
             </video>
+            <!-- Animated figures moving inside the video box -->
+            <div class="figure"></div>
+            <div class="figure figure-2"></div>
         </div>
     </div>
 
     <script>
         let wakeLock = null;
 
-        // Request Wake Lock to prevent the screen from going to sleep
-        async function requestWakeLock() {
+        // Toggle function for wake lock or silent video
+        async function toggleWakeLock() {
             if ('wakeLock' in navigator) {
                 try {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    document.getElementById('status').textContent = 'Wake Lock is active. Screen will not sleep.';
-                    wakeLock.addEventListener('release', () => {
-                        document.getElementById('status').textContent = 'Wake Lock was released.';
-                    });
+                    if (wakeLock === null) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        document.getElementById('status').textContent = 'Wake Lock is active. Screen will not sleep.';
+                        wakeLock.addEventListener('release', () => {
+                            document.getElementById('status').textContent = 'Wake Lock was released.';
+                        });
+                    } else {
+                        await wakeLock.release();
+                        wakeLock = null;
+                        document.getElementById('status').textContent = 'Wake Lock has been disabled.';
+                    }
                 } catch (err) {
-                    document.getElementById('status').textContent = `Wake Lock API not supported: ${err.message}`;
+                    console.error('Wake Lock failed:', err);
                 }
             } else {
                 document.getElementById('status').textContent = 'Wake Lock API is not supported. Playing silent video as fallback.';
@@ -127,22 +148,20 @@
             }
         }
 
-        // Function to play a silent video as a fallback to keep the screen active
+        // Fallback function to play a silent video
         function playSilentVideo() {
             const silentVideo = document.getElementById('silent-video');
             silentVideo.style.display = 'block';
             silentVideo.play();
         }
 
-        // Automatically attempt to activate Wake Lock or play video on page load
-        window.addEventListener('load', () => {
-            requestWakeLock();
-        });
+        // Activate wake lock or silent video on page load
+        window.addEventListener('load', toggleWakeLock);
 
-        // Re-request Wake Lock on visibility change, as it may be released
+        // Re-request wake lock on visibility change, as it may be released
         document.addEventListener('visibilitychange', () => {
             if (wakeLock !== null && document.visibilityState === 'visible') {
-                requestWakeLock();
+                toggleWakeLock();
             }
         });
     </script>
