@@ -20,32 +20,21 @@
             overflow: hidden;
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            background-color: black;
             color: white;
             text-align: center;
-        }
-
-        /* Video as a full-screen background */
-        #video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
         }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Foreground content */
+        /* Centered content */
         #content {
             z-index: 1;
+            text-align: center;
+            position: relative;
+            transform: translateY(-50%);
         }
 
         h1 {
@@ -79,36 +68,40 @@
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
 
-        /* Animated human figures */
+        /* Animated figure */
         .figure {
-            width: 20px;
-            height: 50px;
-            background-color: #ffb347;
-            border-radius: 10px;
-            position: absolute;
-            bottom: 10%;
-            animation: walk 8s linear infinite;
+            width: 112px;
+            height: 156px;
+            background: url(https://i.imgur.com/ifk0SLH.png) repeat-x;
+            animation: walk 0.8s steps(6) infinite;
+            position: relative;
+            bottom: 23%;
+            margin: auto;
         }
 
-        .head {
-            width: 10px;
-            height: 10px;
-            background-color: #333;
-            border-radius: 50%;
-            position: absolute;
-            top: -12px;
-            left: 5px;
-        }
-
-        .figure-2 {
-            background-color: #67eaca;
-            animation-duration: 10s;
-        }
-
-        /* Walk animation */
+        /* Walking animation */
         @keyframes walk {
-            0% { left: -50px; }
-            100% { left: 110vw; }
+            0% { background-position: 0; }
+            100% { background-position: -672px; }
+        }
+
+        /* Background animation */
+        #sea {
+            background: url(https://i.imgur.com/h75XWy8.png) repeat-x;
+            animation: movebg 6s linear infinite;
+            position: fixed;
+            width: 100%;
+            height: 150px;
+            bottom: 0;
+            box-shadow: inset 10px 10px 45px rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes movebg {
+            0% { background-position: 550px; }
+            100% { background-position: 0; }
         }
 
         /* Fade-in animation */
@@ -120,11 +113,9 @@
 </head>
 <body>
     <!-- Video Background Container -->
-    <div id="video-container">
-        <video id="silent-video" autoplay loop muted>
-            <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
-        </video>
-    </div>
+    <video id="silent-video" autoplay loop muted style="display: none;">
+        <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
+    </video>
 
     <!-- Foreground Content -->
     <div id="content">
@@ -133,12 +124,9 @@
         <button onclick="toggleWakeLock()">Activate Wake Lock</button>
     </div>
 
-    <!-- Animated Figures -->
-    <div class="figure" style="left: 20%;">
-        <div class="head"></div>
-    </div>
-    <div class="figure figure-2" style="left: 60%;">
-        <div class="head"></div>
+    <!-- Bottom Sea Animation and Walking Figure -->
+    <div id="sea">
+        <div class="figure"></div>
     </div>
 
     <script>
