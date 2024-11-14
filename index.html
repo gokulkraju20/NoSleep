@@ -12,28 +12,48 @@
     <meta name="author" content="Your Name">
 
     <style>
-        /* Body styling */
-        body {
+        /* Full-screen video background */
+        body, html {
             margin: 0;
             padding: 0;
+            height: 100%;
+            overflow: hidden;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             text-align: center;
         }
 
-        /* Heading styling */
+        /* Video as a full-screen background */
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Foreground content */
+        #content {
+            z-index: 1;
+        }
+
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
             animation: fadeIn 2s ease-in-out;
         }
 
-        /* Status styling */
         #status {
             font-size: 1.2rem;
             margin-top: 1rem;
@@ -41,7 +61,6 @@
             animation: fadeIn 3s ease-in-out;
         }
 
-        /* Button styling */
         button {
             background-color: #ffb347;
             border: none;
@@ -60,41 +79,36 @@
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
 
-        /* Video container styling with animation */
-        #video-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            overflow: hidden;
+        /* Animated human figures */
+        .figure {
+            width: 20px;
+            height: 50px;
+            background-color: #ffb347;
             border-radius: 10px;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-            background-color: #222;
-            margin-top: 2rem;
+            position: absolute;
+            bottom: 10%;
+            animation: walk 8s linear infinite;
         }
 
-        /* Animation of figures walking across the screen */
-        .figure {
-            width: 30px;
-            height: 60px;
-            background-color: #ffb347;
-            border-radius: 15px;
+        .head {
+            width: 10px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 50%;
             position: absolute;
-            bottom: 10px;
-            animation: walk 5s linear infinite;
+            top: -12px;
+            left: 5px;
         }
 
         .figure-2 {
             background-color: #67eaca;
-            width: 20px;
-            height: 40px;
-            border-radius: 10px;
-            animation-duration: 6s;
+            animation-duration: 10s;
         }
 
         /* Walk animation */
         @keyframes walk {
             0% { left: -50px; }
-            100% { left: 250px; }
+            100% { left: 110vw; }
         }
 
         /* Fade-in animation */
@@ -105,20 +119,26 @@
     </style>
 </head>
 <body>
-    <div>
+    <!-- Video Background Container -->
+    <div id="video-container">
+        <video id="silent-video" autoplay loop muted>
+            <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Foreground Content -->
+    <div id="content">
         <h1>Prevent VDI Sleep Mode</h1>
         <p id="status">Ensuring the screen stays active...</p>
         <button onclick="toggleWakeLock()">Activate Wake Lock</button>
+    </div>
 
-        <!-- Silent Video with animated container -->
-        <div id="video-container">
-            <video id="silent-video" autoplay loop muted width="100%" height="100%" style="display: none;">
-                <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
-            </video>
-            <!-- Animated figures moving inside the video box -->
-            <div class="figure"></div>
-            <div class="figure figure-2"></div>
-        </div>
+    <!-- Animated Figures -->
+    <div class="figure" style="left: 20%;">
+        <div class="head"></div>
+    </div>
+    <div class="figure figure-2" style="left: 60%;">
+        <div class="head"></div>
     </div>
 
     <script>
