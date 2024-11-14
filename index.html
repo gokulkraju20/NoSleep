@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prevent Computer and VDI from Sleeping - Wake Lock API Example</title>
+    <title>Prevent VDI Sleep Mode - Animated Experience</title>
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="Prevent your VDI or computer from going idle with this Wake Lock API example. Includes animations and a fallback method for non-supported devices.">
@@ -16,7 +16,6 @@
     <meta name="og:url" content="https://yourwebsite.com/prevent-vdi-sleep">
     <meta name="og:image" content="https://yourwebsite.com/images/sleep-prevent-thumbnail.jpg">
 
-    <!-- Styles and Animations -->
     <style>
         /* Body styling */
         body {
@@ -67,24 +66,23 @@
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
 
-        /* Ball animation */
-        #ball {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background-color: #ffe7b3;
-            border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            animation: moveBall 8s infinite alternate ease-in-out;
+        /* Animated video box styling */
+        #video-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            animation: floatBox 6s infinite alternate ease-in-out;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            margin-top: 2rem;
         }
 
-        /* Ball animation keyframes */
-        @keyframes moveBall {
-            0% { top: 10%; left: 10%; }
-            25% { top: 20%; left: 80%; }
-            50% { top: 60%; left: 50%; }
-            75% { top: 80%; left: 20%; }
-            100% { top: 10%; left: 90%; }
+        /* Float animation for video box */
+        @keyframes floatBox {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+            100% { transform: translateY(10px) rotate(-3deg); }
         }
 
         /* Fade-in animation */
@@ -100,13 +98,12 @@
         <p id="status">Ensuring the screen stays active...</p>
         <button onclick="requestWakeLock()">Activate Wake Lock</button>
 
-        <!-- Silent Video (Fallback for Wake Lock API) -->
-        <video id="silent-video" autoplay loop muted style="display: none;">
-            <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
-        </video>
-        
-        <!-- Moving Ball Animation -->
-        <div id="ball"></div>
+        <!-- Silent Video with animated container -->
+        <div id="video-container">
+            <video id="silent-video" autoplay loop muted width="100%" height="100%">
+                <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
+            </video>
+        </div>
     </div>
 
     <script>
