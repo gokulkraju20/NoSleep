@@ -3,46 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prevent Sleep Mode with Silent Video</title>
+    <title>Prevent Sleep Mode</title>
     <style>
+        /* Global Styles */
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f3f4f6;
-            margin: 0;
             text-align: center;
+            overflow: hidden;
         }
+
         h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
+            color: white;
             margin-bottom: 20px;
+            animation: fadeIn 2s ease-in-out;
         }
+
         #status {
             font-size: 1.2rem;
-            color: green;
+            color: #fff;
+            margin-top: 20px;
+            animation: fadeIn 3s ease-in-out;
         }
+
+        /* Button Style */
+        button {
+            background-color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            color: #ff7e5f;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff7e5f;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
         /* Video styling */
         #silent-video {
-            width: 640px;
-            height: 360px;
-            border: 3px solid #000;
+            width: 100%;
+            height: 100%;
+            max-width: 640px;
+            max-height: 360px;
+            border: 3px solid #fff;
             margin-top: 20px;
+            animation: fadeIn 4s ease-in-out;
+        }
+
+        /* Keyframes for Fade-In Animation */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Create a subtle bounce animation for the button */
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            20% { transform: translateY(-10px); }
+            40% { transform: translateY(0); }
+        }
+
+        button:active {
+            animation: bounce 0.5s ease-in-out;
         }
     </style>
 </head>
 <body>
     <div>
-        <h1>Prevent Sleep Mode with Silent Video</h1>
+        <h1>Prevent Sleep Mode</h1>
         <p id="status">Attempting to prevent sleep...</p>
 
-        <!-- Visible silent video (black video loop) -->
+        <!-- Visible silent video -->
         <video id="silent-video" autoplay loop muted>
             <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
         </video>
 
         <button onclick="requestWakeLock()">Activate Wake Lock</button>
+
         <script>
             let wakeLock = null;
 
