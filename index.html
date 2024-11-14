@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prevent Sleep with Silent Audio</title>
+    <title>Prevent Sleep with Silent Video</title>
     <style>
         /* Gradient background */
         body {
@@ -17,6 +17,7 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: #ffffff;
             text-align: center;
+            overflow: hidden;
         }
 
         /* Heading style */
@@ -73,32 +74,33 @@
 </head>
 <body>
 
-<h1>Prevent Sleep with Silent Audio</h1>
-<p id="status">Silent audio is active to prevent sleep.</p>
+<h1>Prevent Sleep with Silent Video</h1>
+<p id="status">Silent video is active to prevent sleep.</p>
 
-<!-- Invisible audio element for fallback -->
-<audio id="silent-audio" loop autoplay style="display: none;">
-    <source src="data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQAAAAA=" type="audio/wav">
-</audio>
+<!-- Silent video (black video loop) -->
+<video id="silent-video" autoplay loop muted style="display: none;">
+    <!-- Create a simple 1x1 pixel silent black video -->
+    <source src="data:video/mp4;base64,AAAAIGZ0eXBNU0ZGRk5WAAAAGG1kYXRhAAAAAGl2ZGF0YQAAAA8AAAAIZGF0YQAAAAAAAAAADwAAMzAwAAAAl2lBq57U9i8KDNwA1cEdFJlq8W9dQsA1rPz/A3OTGVgnmMJtmF0sCVROOG1kQU4qFdKmlwVFLmbnxSjjxD7uZIN9a8aUkYpiXbRY34f5HZZi3lf3MQ4x55u1jj9FzOgI66pzQI2oB1PlmLKNfj7w2JwZz5DE=" type="video/mp4">
+</video>
 
 <script>
-    const silentAudio = document.getElementById('silent-audio');
+    const silentVideo = document.getElementById('silent-video');
     const statusElement = document.getElementById('status');
     
-    // Start playing silent audio as soon as the page loads
+    // Start playing silent video as soon as the page loads
     window.addEventListener('load', () => {
-        silentAudio.play();
-        statusElement.textContent = "Silent audio is actively playing to prevent sleep.";
+        silentVideo.play();
+        statusElement.textContent = "Silent video is actively playing to prevent sleep.";
     });
 
-    // Allow toggling of the silent audio playback (optional)
+    // Optional: Button to toggle the silent video playback (if needed)
     document.getElementById('toggle-wake-lock').addEventListener('click', () => {
-        if (silentAudio.paused) {
-            silentAudio.play();
-            statusElement.textContent = "Silent audio is actively playing to prevent sleep.";
+        if (silentVideo.paused) {
+            silentVideo.play();
+            statusElement.textContent = "Silent video is actively playing to prevent sleep.";
         } else {
-            silentAudio.pause();
-            statusElement.textContent = "Silent audio has been stopped.";
+            silentVideo.pause();
+            statusElement.textContent = "Silent video has been stopped.";
         }
     });
 </script>
