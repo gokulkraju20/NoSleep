@@ -120,8 +120,8 @@
     <!-- Foreground Content -->
     <div id="content">
         <h1>Prevent VDI Sleep Mode</h1>
-        <p id="status">Ensuring the screen stays active...</p>
-        <button onclick="toggleWakeLock()">Activate Wake Lock</button>
+        <p style="color:white" id="status">Ensuring the screen stays active...</p>
+        <button id="activateButton" onclick="toggleWakeLock()">Deactivate Wake Lock</button>
     </div>
 
     <!-- Bottom Sea Animation and Walking Figure -->
@@ -139,13 +139,16 @@
                     if (wakeLock === null) {
                         wakeLock = await navigator.wakeLock.request('screen');
                         document.getElementById('status').textContent = 'Wake Lock is active. Screen will not sleep.';
+						document.getElementById('activateButton').textContent = 'Deactivate Wake Lock';
                         wakeLock.addEventListener('release', () => {
                             document.getElementById('status').textContent = 'Wake Lock was released.';
+							document.getElementById('activateButton').textContent = 'Deactivate Wake Lock';
                         });
                     } else {
                         await wakeLock.release();
                         wakeLock = null;
                         document.getElementById('status').textContent = 'Wake Lock has been disabled.';
+						document.getElementById('activateButton').textContent = 'Activate Wake Lock';
                     }
                 } catch (err) {
                     console.error('Wake Lock failed:', err);
