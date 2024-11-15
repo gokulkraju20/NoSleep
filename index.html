@@ -140,10 +140,11 @@
                         wakeLock = await navigator.wakeLock.request('screen');
                         document.getElementById('status').textContent = 'Wake Lock is active. Screen will not sleep.';
 						document.getElementById('activateButton').textContent = 'Deactivate Wake Lock';
-                        wakeLock.addEventListener('release', () => {
-                            document.getElementById('status').textContent = 'Wake Lock was released.';
-							document.getElementById('activateButton').textContent = 'Deactivate Wake Lock';
-                        });
+                        <!-- wakeLock.addEventListener('release', () => { -->
+                            <!-- document.getElementById('status').textContent = 'Wake Lock was released.'; -->
+							<!-- document.getElementById('activateButton').textContent = 'Deactivate Wake Lock'; -->
+                        <!-- }); -->
+						playSilentVideo();
                     } else {
                         await wakeLock.release();
                         wakeLock = null;
